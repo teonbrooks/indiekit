@@ -9,6 +9,7 @@ import { getMf2Properties, jf2ToMf2 } from "../mf2.js";
  */
 export const queryController = async (request, response, next) => {
   const { application, publication } = request.app.locals;
+  const { database } = application;
 
   try {
     const config = getConfig(application, publication);
@@ -33,7 +34,7 @@ export const queryController = async (request, response, next) => {
       }
 
       case "source": {
-        if (!application.hasDatabase) {
+        if (!database) {
           throw IndiekitError.notImplemented(
             response.locals.__("NotImplementedError.database")
           );
@@ -41,8 +42,8 @@ export const queryController = async (request, response, next) => {
 
         if (url) {
           // Return mf2 for a given URL (optionally filtered by properties)
-          const item = await application.posts.findOne({
-            "properties.url": url,
+          const item = await database.post.findUnique({
+            where: { properties: { is: { url } } },
           });
 
           if (!item) {
@@ -55,12 +56,7 @@ export const queryController = async (request, response, next) => {
           response.json(getMf2Properties(mf2, properties));
         } else {
           // Return mf2 for previously published posts
-          const cursor = await getCursor(
-            application.posts,
-            after,
-            before,
-            limit
-          );
+          const cursor = await getCursor(database.post, after, before, limit);
 
           response.json({
             items: cursor.items.map((post) => jf2ToMf2(post.properties)),

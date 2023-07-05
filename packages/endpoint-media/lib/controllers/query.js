@@ -7,6 +7,7 @@ import { getCursor } from "@indiekit/util";
  */
 export const queryController = async (request, response, next) => {
   const { application } = request.app.locals;
+  const { database } = application;
 
   try {
     const limit = Number(request.query.limit) || 0;
@@ -20,7 +21,7 @@ export const queryController = async (request, response, next) => {
 
     switch (q) {
       case "source": {
-        if (!application.hasDatabase) {
+        if (!database) {
           throw IndiekitError.notImplemented(
             response.locals.__("NotImplementedError.database")
           );
@@ -28,17 +29,19 @@ export const queryController = async (request, response, next) => {
 
         if (url) {
           // Return properties for a given URL
-          const item = await application.media.findOne(
-            { "properties.url": url },
-            {
-              projection: {
-                "properties.content-type": 1,
-                "properties.media-type": 1,
-                "properties.published": 1,
-                "properties.url": 1,
+          const item = await database.media.findFirst({
+            select: {
+              properties: {
+                select: {
+                  contentType: true,
+                  mediaType: true,
+                  published: true,
+                  url: true,
+                },
               },
-            }
-          );
+            },
+            where: { properties: { is: { url } } },
+          });
 
           if (!item) {
             throw IndiekitError.notFound(
@@ -49,12 +52,7 @@ export const queryController = async (request, response, next) => {
           response.json(item.properties);
         } else {
           // Return properties for all previously uploaded files
-          const cursor = await getCursor(
-            application.media,
-            after,
-            before,
-            limit
-          );
+          const cursor = await getCursor(database.media, after, before, limit);
 
           response.json({
             items: cursor.items.map((post) => ({

@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+type MediaProperties {
+  basename     String
+  contentType  String @map("content-type")
+  ext          String
+  filename     String
+  mediaType    String @map("media-type")
+  originalname String
+  published    String
+  url          String
+}
+
+type PostProperties {
+  audio         PostAudio[]
+  bookmarkOf    String?                @map("bookmark-of")
+  category      String[]
+  content       PostContent
+  mpDestination String?                @map("mp-destination")
+  mpSlug        String                 @map("mp-slug")
+  name          String?
+  photo         PostPhoto[]
+  postStatus    String                 @map("post-status")
+  postType      String                 @map("post-type")
+  published     DateTime
+  type          String
+  updated       DateTime?
+  url           String
+  video         PostVideo[]
+  visibility    String?
+}
+
+type PostAudio {
+  alt String
+  url String
+}
+
+type PostContent {
+  html String
+  text String
+}
+
+type PostPhoto {
+  alt String
+  url String
+}
+
+type PostVideo {
+  alt String
+  url String
+}
+
+model keyv {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  expiresAt DateTime?
+  key       String
+  value     Json?
+}
+
+model media {
+  id         String          @id @default(auto()) @map("_id") @db.ObjectId
+  path       String
+  properties MediaProperties
+}
+
+model post {
+  id         String          @id @default(auto()) @map("_id") @db.ObjectId
+  path       String
+  properties PostProperties
+}

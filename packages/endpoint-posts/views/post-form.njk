@@ -27,33 +27,33 @@
   }) | indent(2) }}
 
   {{ input({
-    name: "post-type",
+    name: "postType",
     type: "hidden",
     value: postType
   }) | indent(2) }}
 
   {{ input({
-    id: "bookmark-of",
-    name: "bookmark-of",
-    value: errors["bookmark-of"].value or post["bookmark-of"],
+    id: "bookmarkOf",
+    name: "bookmarkOf",
+    value: errors.bookmarkOf.value or post.bookmarkOf,
     label: {
       text: __("posts.form.bookmark-of.label")
     },
     errorMessage: {
-      text: errors["bookmark-of"].msg
-    } if errors["bookmark-of"]
+      text: errors.bookmarkOf.msg
+    } if errors.bookmarkOf
   }) | indent(2) if postType === "bookmark" }}
 
   {{ input({
-    id: "in-reply-to",
-    name: "in-reply-to",
-    value: errors["in-reply-to"].value or post["in-reply-to"],
+    id: "inReplyTo",
+    name: "inReplyTo",
+    value: errors.inReplyTo.value or post.inReplyTo,
     label: {
       text: __("posts.form.in-reply-to.label")
     },
     errorMessage: {
-      text: errors["in-reply-to"].msg
-    } if errors["in-reply-to"]
+      text: errors.inReplyTo.msg
+    } if errors.inReplyTo
   }) | indent(2) if postType === "reply" or postType === "rsvp" }}
 
   {{ radios({
@@ -82,27 +82,27 @@
   }) | indent(2) if postType === "rsvp" }}
 
   {{ input({
-    id: "like-of",
-    name: "like-of",
-    value: errors["like-of"].value or post["like-of"],
+    id: "likeOf",
+    name: "likeOf",
+    value: errors.likeOf.value or post.likeOf,
     label: {
       text: __("posts.form.like-of.label")
     },
     errorMessage: {
-      text: errors["like-of"].msg
-    } if errors["like-of"]
+      text: errors.likeOf.msg
+    } if errors.likeOf
   }) | indent(2) if postType === "like" }}
 
   {{ input({
-    id: "repost-of",
-    name: "repost-of",
-    value: errors["repost-of"].value or post["repost-of"],
+    id: "repostOf",
+    name: "repostOf",
+    value: errors.repostOf.value or post.repostOf,
     label: {
       text: __("posts.form.repost-of.label")
     },
     errorMessage: {
-      text: errors["repost-of"].msg
-    } if errors["repost-of"]
+      text: errors.repostOf.msg
+    } if errors.repostOf
   }) | indent(2) if postType === "repost" }}
 
   {{ input({
@@ -143,9 +143,9 @@
   }) if postType === "article" }}
 
   {{ checkboxes({
-    idPrefix: "mp-syndicate-to",
-    name: "mp-syndicate-to",
-    values: post["mp-syndicate-to"],
+    idPrefix: "mpSyndicateTo",
+    name: "mpSyndicateTo",
+    values: post.mpSyndicateTo,
     fieldset: {
       legend: {
         text: __("posts.form.mp-syndicate-to.label")
@@ -185,15 +185,15 @@
 
     {{ input({
       classes: "input--width-25",
-      id: "mp-slug",
-      name: "mp-slug",
-      value: errors["mp-slug"].value or post["mp-slug"],
+      id: "mpSlug",
+      name: "mpSlug",
+      value: errors.mpSlug.value or post.mpSlug,
       label: {
         text: __("posts.form.mp-slug.label")
       },
       optional: true,
       attributes: {
-        readonly: true if post["mp-slug"]
+        readonly: true if post.mpSlug
       }
     }) | indent(4) }}
 
@@ -224,13 +224,13 @@
 {% block buttons %}
   <div class="button-group">
     {{ button({
-      name: "post-status",
+      name: "postStatus",
       value: "published",
       text: __("posts.form.update") if postStatus === "published" else __("posts.form.publish")
     }) | indent(4) if not draftMode }}
 
     {{ button({
-      name: "post-status",
+      name: "postStatus",
       value: "draft",
       classes: "button--secondary",
       text: __("posts.form.updateDraft") if postStatus === "draft" else __("posts.form.publishDraft")

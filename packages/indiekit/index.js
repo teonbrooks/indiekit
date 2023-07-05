@@ -8,6 +8,7 @@ import { getIndiekitConfig } from "./lib/config.js";
 import { getInstalledPlugins } from "./lib/installed-plugins.js";
 import { getLocaleCatalog } from "./lib/locale-catalog.js";
 import { getMongodbConfig } from "./lib/mongodb.js";
+import { getPrismaConfig } from "./lib/prisma.js";
 import { getPostTemplate } from "./lib/post-template.js";
 import { getPostTypes } from "./lib/post-types.js";
 
@@ -53,18 +54,20 @@ export const Indiekit = class {
   }
 
   async bootstrap() {
-    const database = await getMongodbConfig(this.application.mongodbUrl);
-
     // Setup databases
-    if (database) {
-      this.application.hasDatabase = true;
+    const mongodb = await getMongodbConfig(this.application.mongodbUrl);
+    if (mongodb) {
       this.application.cache = new Keyv({
         collectionName: "cache",
-        store: new KeyvMongoDB({ db: database }),
+        store: new KeyvMongoDB({ db: mongodb }),
         ttl: this.application.ttl,
       });
-      this.application.posts = database.collection("posts");
-      this.application.media = database.collection("media");
+    }
+
+    // Setup ORM
+    const prisma = await getPrismaConfig();
+    if (prisma) {
+      this.application.database = await prisma;
     }
 
     // Update application configuration

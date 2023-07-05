@@ -12,7 +12,7 @@ export const mediaData = {
    * @returns {Promise<object>} Media data
    */
   async create(application, publication, file) {
-    const { media, timeZone } = application;
+    const { database, timeZone } = application;
     const { me, postTypes } = publication;
 
     // Media properties
@@ -54,9 +54,8 @@ export const mediaData = {
 
     const mediaData = { path, properties };
 
-    // Add data to media collection (if present)
-    if (application.hasDatabase) {
-      await media.insertOne(mediaData);
+    if (database) {
+      await database.media.create({ data: mediaData });
     }
 
     return mediaData;
@@ -69,10 +68,12 @@ export const mediaData = {
    * @returns {Promise<object>} Media data
    */
   async read(application, url) {
-    const { media } = application;
-    const query = { "properties.url": url };
+    const { database } = application;
 
-    const mediaData = await media.findOne(query);
+    const mediaData = await database.media.findUnique({
+      where: { properties: { is: { url } } },
+    });
+
     if (!mediaData) {
       throw IndiekitError.notFound(url);
     }
@@ -87,14 +88,15 @@ export const mediaData = {
    * @returns {Promise<boolean>} Media data deleted
    */
   async delete(application, url) {
-    const { media } = application;
-    const query = { "properties.url": url };
+    const { database } = application;
 
-    const result = await media.deleteOne(query);
-    if (result?.deletedCount === 1) {
+    try {
+      await database.media.delete({
+        where: { properties: { is: { url } } },
+      });
       return true;
+    } catch {
+      throw new Error("No media data to delete");
     }
-
-    throw new Error("No media data to delete");
   },
 };

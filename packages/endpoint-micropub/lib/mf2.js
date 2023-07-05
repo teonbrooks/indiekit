@@ -49,8 +49,12 @@ export const jf2ToMf2 = (jf2) => {
 
   // Move values to property object
   for (const key in jf2) {
+    if (!jf2[key] || jf2[key].length === 0) {
+      delete jf2[key];
+    }
+
     // Convert nested vocabulary to mf2 (i.e. h-card, h-geo, h-adr)
-    if (Object.prototype.hasOwnProperty.call(jf2[key], "type")) {
+    else if (Object.prototype.hasOwnProperty.call(jf2[key], "type")) {
       mf2.properties[key] = [jf2ToMf2(jf2[key])];
     }
 

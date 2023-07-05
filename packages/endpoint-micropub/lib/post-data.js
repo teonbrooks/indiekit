@@ -15,13 +15,13 @@ export const postData = {
    * @returns {Promise<object>} Post data
    */
   async create(application, publication, properties, draftMode = false) {
-    const { posts, timeZone } = application;
+    const { database, timeZone } = application;
     const { me, postTypes, syndicationTargets } = publication;
 
     // Add syndication targets
     const syndicateTo = getSyndicateToProperty(properties, syndicationTargets);
     if (syndicateTo) {
-      properties["mp-syndicate-to"] = syndicateTo;
+      properties.mp_syndicate_to = syndicateTo;
     }
 
     // Normalise properties
@@ -32,7 +32,7 @@ export const postData = {
 
     // Post type
     const type = getPostType(properties);
-    properties["post-type"] = type;
+    properties.postType = type;
 
     // Get post type configuration
     const typeConfig = getPostTypeConfig(type, postTypes);
@@ -51,15 +51,21 @@ export const postData = {
 
     // Post status
     // Draft mode: Only create post with a `draft` post-status
-    properties["post-status"] = draftMode
+    properties.postStatus = draftMode
       ? "draft"
-      : properties["post-status"] || "published";
+      : properties.postStatus || "published";
 
     const postData = { path, properties };
 
-    // Add data to posts collection (if present)
-    if (application.hasDatabase) {
-      await posts.insertOne(postData, { checkKeys: false });
+    if (database) {
+      await database.post.create({
+        data: {
+          path,
+          properties: {
+            set: properties,
+          },
+        },
+      });
     }
 
     return postData;
@@ -72,10 +78,12 @@ export const postData = {
    * @returns {Promise<object>} Post data
    */
   async read(application, url) {
-    const { posts } = application;
-    const query = { "properties.url": url };
+    const { database } = application;
 
-    const postData = await posts.findOne(query);
+    const postData = await database.post.findUnique({
+      where: { properties: { is: { url } } },
+    });
+
     if (!postData) {
       throw IndiekitError.notFound(url);
     }
@@ -94,7 +102,7 @@ export const postData = {
    * @returns {Promise<object>} Post data
    */
   async update(application, publication, url, operation) {
-    const { posts, timeZone } = application;
+    const { database, timeZone } = application;
     const { me, postTypes } = publication;
 
     // Read properties
@@ -141,10 +149,12 @@ export const postData = {
     );
     properties.url = getCanonicalUrl(updatedUrl, me);
 
-    // Update data in posts collection
     const postData = { path, properties };
-    const query = { "properties.url": url };
-    await posts.replaceOne(query, postData, { checkKeys: false });
+
+    await database.post.update({
+      data: postData,
+      where: { properties: { is: { url } } },
+    });
 
     return postData;
   },
@@ -159,7 +169,7 @@ export const postData = {
    * @returns {Promise<object>} Post data
    */
   async delete(application, publication, url) {
-    const { posts, timeZone } = application;
+    const { database, timeZone } = application;
     const { postTypes } = publication;
 
     // Read properties
@@ -188,10 +198,12 @@ export const postData = {
       application
     );
 
-    // Update data in posts collection
     const postData = { path, properties, _deletedProperties };
-    const query = { "properties.url": url };
-    await posts.replaceOne(query, postData, { checkKeys: false });
+
+    await database.post.update({
+      data: postData,
+      where: { properties: { is: { url } } },
+    });
 
     return postData;
   },
@@ -207,7 +219,7 @@ export const postData = {
    * @returns {Promise<object>} Post data
    */
   async undelete(application, publication, url, draftMode) {
-    const { posts } = application;
+    const { database } = application;
     const { postTypes } = publication;
 
     // Read deleted properties
@@ -232,10 +244,12 @@ export const postData = {
       ? "draft"
       : properties["post-status"] || "published";
 
-    // Update data in posts collection
     const postData = { path, properties };
-    const query = { "properties.url": url };
-    await posts.replaceOne(query, postData, { checkKeys: false });
+
+    await database.post.replaceOne({
+      data: postData,
+      where: { properties: { is: { url } } },
+    });
 
     return postData;
   },

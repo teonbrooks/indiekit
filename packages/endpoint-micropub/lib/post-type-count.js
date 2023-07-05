@@ -6,7 +6,7 @@ export const postTypeCount = {
    * @returns {Promise<object>} Post count
    */
   async get(application, properties) {
-    if (!application.posts || !application.posts.count()) {
+    if (!application.database) {
       console.warn("No database configuration provided");
       console.info(
         "See https://getindiekit.com/configuration/#application-mongodburl-url"
@@ -15,31 +15,27 @@ export const postTypeCount = {
       return;
     }
 
-    // Post type
     const postType = properties["post-type"];
     const startDate = new Date(new Date(properties.published).toDateString());
     const endDate = new Date(startDate);
     endDate.setDate(endDate.getDate() + 1);
-    const response = await application.posts
-      .aggregate([
-        {
-          $addFields: {
-            convertedDate: {
-              $toDate: "$properties.published",
+    const response = await application.database.post.aggregate({
+      _count: true,
+      where: {
+        properties: {
+          is: {
+            postType: {
+              equals: postType,
+            },
+            published: {
+              gte: startDate,
+              lt: endDate,
             },
           },
         },
-        {
-          $match: {
-            "properties.post-type": postType,
-            convertedDate: {
-              $gte: startDate,
-              $lt: endDate,
-            },
-          },
-        },
-      ])
-      .toArray();
+      },
+    });
+
     return response.length;
   },
 };

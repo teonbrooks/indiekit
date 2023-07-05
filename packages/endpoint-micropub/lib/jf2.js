@@ -91,10 +91,10 @@ export const normaliseProperties = (publication, properties) => {
     properties.video = getVideoProperty(properties, me);
   }
 
-  properties["mp-slug"] = getSlugProperty(properties, slugSeparator);
+  properties.mpSlug = getSlugProperty(properties, slugSeparator);
 
-  if (properties["mp-syndicate-to"]) {
-    properties["mp-syndicate-to"] = toArray(properties["mp-syndicate-to"]);
+  if (properties.mp_syndicate_to) {
+    properties.mp_syndicate_to = toArray(properties.mp_syndicate_to);
   }
 
   if (properties.syndication) {
