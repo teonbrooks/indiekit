@@ -31,7 +31,7 @@ export default class FrontendEndpoint {
         errors: {
           content: {
             msg: "Input error",
-            param: "input",
+            path: "input",
           },
         },
       });
