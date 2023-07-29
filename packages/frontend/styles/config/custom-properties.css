@@ -59,6 +59,7 @@ html {
   --color-on-focus: var(--color-on-background);
   --color-selection: hsl(var(--tint-yellow) 50% / 30%);
   --color-shadow: hsl(var(--tint-neutral) 10% / 0.2);
+  --color-shadow-dark: hsl(var(--tint-neutral) 10% / 0.8);
 
   /* Fluid type scale */
   /* clamp(min=320, preferred, max=960) */
@@ -112,6 +113,7 @@ html {
 
   /* Box shadows */
   --focus-width: 0.25rem;
+  --drop-shadow: 0 0 var(--space-l) var(--color-shadow);
 
   /* Fluid space scale */
   /* clamp(min=320, preferred, max=960) */

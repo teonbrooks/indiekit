@@ -37,9 +37,16 @@
     visuallyHiddenText: opts.errorMessage.visuallyHiddenText
   }) }}
 {% endif %}
+{%- if opts.richEditor %}
+<input name="{{ opts.name }}" type="hidden"
+  {%- if opts.id %} id="{{ opts.id }}"{% endif %}
+  {%- if opts.value %} value="{{ opts.value }}"{% endif %}>
+<trix-editor class="{{ classes("textarea s-flow", opts) }}" name="{{ opts.name }}" input="{{ opts.id }}" data-media-endpoint={{ application.mediaEndpoint }}></trix-editor>
+{%- else %}
 <textarea class="{{ classes("textarea", opts) }}" name="{{ opts.name }}" rows="{{ opts.rows or 3 }}" data-controller="textarea"
   {%- if opts.id %} id="{{ opts.id}}"{% endif %}
   {%- if describedBy %} aria-describedby="{{ describedBy }}"{% endif %}
   {%- if opts.autocomplete %} autocomplete="{{ opts.autocomplete}}"{% endif %}
   {{- attributes(opts.attributes) }}>{{ opts.value }}</textarea>
+{%- endif %}
 {%- endcall %}

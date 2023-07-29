@@ -22,7 +22,10 @@
 
   & h2:not([class]) {
     font: var(--font-heading);
-    margin-block-start: calc(var(--flow-space) * 2);
+
+    &:not(:first-child) {
+      margin-block-start: calc(var(--flow-space) * 2);
+    }
   }
 
   & h3:not([class]) {

@@ -94,6 +94,19 @@
   }
 }) }}
 
+{{ textarea({
+  errorMessage: { text: "Rich textarea input error" } if errors,
+  name: "rich-textarea",
+  id: "rich-textarea",
+  label: {
+    text: "Rich textarea"
+  },
+  hint: {
+    text: "Rich textarea hint text"
+  },
+  richEditor: true
+}) }}
+
 {{ geoInput({
   errorMessage: { text: "Geo input error" } if errors,
   name: "geo-input",

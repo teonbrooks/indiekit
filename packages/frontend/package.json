@@ -51,6 +51,7 @@
     "rollup-plugin-polyfill-node": "^0.12.0",
     "sharp": "^0.32.0",
     "tokenfield": "^1.5.2",
+    "trix": "^2.0.5",
     "widont": "^0.3.3"
   },
   "publishConfig": {
