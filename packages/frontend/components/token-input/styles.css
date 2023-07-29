@@ -1,10 +1,6 @@
 .tokenfield {
   --anchor-decoration-line: none;
   position: relative;
-
-  & > * {
-    --fieldset-flow-space: 0;
-  }
 }
 
 .tokenfield-input {

@@ -1,11 +1,9 @@
-.field {
-  & > * {
-    --fieldset-flow-space: 0;
-  }
+.field:not(:first-child) {
+  margin-block-start: var(--space-xl);
+}
 
-  &:has(.input[type="hidden"]) {
-    display: none;
-  }
+.field:has(.input[type="hidden"]) {
+  display: none;
 }
 
 .field--error {

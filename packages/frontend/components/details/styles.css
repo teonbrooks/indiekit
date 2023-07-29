@@ -1,3 +1,7 @@
+.details:not(:first-child) {
+  margin-block-start: var(--space-xl);
+}
+
 .details__summary {
   --details-color: var(--anchor-color, currentcolor);
   --details-color-hover: var(--anchor-color-hover, var(--color-on-background));
