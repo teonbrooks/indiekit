@@ -1,0 +1,47 @@
+{% from "../button/macro.njk" import button with context %}
+{% from "../error-message/macro.njk" import errorMessage with context %}
+{% from "../input/macro.njk" import input with context %}
+{% from "../progress/macro.njk" import progress with context %}
+{% set id = opts.id or opts.name | slugify({ decamelize: true }) %}
+{% call input({
+  field: {
+    attributes: {
+      "data-controller": "file-input",
+      "data-file-input-endpoint-value": opts.uploadEndpoint
+    }
+  },
+  classes: opts.classes,
+  id: id,
+  name: opts.name,
+  value: opts.value,
+  label: opts.label,
+  hint: opts.hint,
+  optional: opts.optional,
+  attributes: {
+    "aria-describedby": id + "-progress",
+    "data-file-input-target": "file"
+  },
+  errorMessage: opts.errorMessage
+}) %}
+
+  {{ progress({
+    id: id + "-progress",
+    label: __("fileInput.uploadingFile"),
+    attributes: {
+      hidden: "true",
+      "data-file-input-target": "progress"
+    }
+  }) }}
+
+  <template data-file-input-target="button">
+    <div class="file-input__button">
+      <label class="button button--secondary" for="{{ id }}-file">{{ __("fileInput.chooseFile") }}</label>
+      <input class="-!-visually-hidden" id="{{ id }}-file" type="file" data-action="file-input#fetch">
+    </div>
+  </template>
+  <template data-file-input-target="errorMessage">
+    {{ errorMessage({
+      id: id + "-error"
+    }) | indent(4) }}
+  </template>
+{% endcall %}
