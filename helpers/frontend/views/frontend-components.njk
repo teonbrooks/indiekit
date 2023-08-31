@@ -6,6 +6,7 @@
 {%- from "logo/macro.njk" import logo with context -%}
 {%- from "navigation/macro.njk" import navigation with context -%}
 {%- from "preview/macro.njk" import preview with context -%}
+{%- from "progress/macro.njk" import progress with context -%}
 
 {% block content %}
 <h2><code>actions</code></h2>
@@ -413,6 +414,13 @@
     for: "url",
     value: "https://website.example"
   }
+}) }}
+
+<h2><code>progress</code></h2>
+
+{{ progress({
+  label: "Uploading file",
+  id: "progress"
 }) }}
 
 <h2><code>section</code></h2>
