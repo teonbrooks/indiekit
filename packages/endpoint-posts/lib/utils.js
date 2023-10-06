@@ -1,5 +1,6 @@
 import { Buffer } from "node:buffer";
 import { mf2tojf2 } from "@paulrobertlloyd/mf2tojf2";
+import { ObjectId } from "mongodb";
 import formatcoords from "formatcoords";
 import { endpoint } from "./endpoint.js";
 import { statusTypes } from "./status-types.js";
@@ -116,6 +117,24 @@ export const getPostTypeName = (publication, postType) => {
 export const getPostUrl = (id) => {
   const url = Buffer.from(id, "base64url").toString("utf8");
   return new URL(url).href;
+};
+
+/**
+ * Query database for post storage data
+ * @param {object} application - Application configuration
+ * @param {string} uid - Item UID
+ * @returns {Promise<object>} Post storage properties
+ */
+export const getStoreProperties = async (application, uid) => {
+  if (!application.hasDatabase) {
+    return;
+  }
+
+  const { posts } = application;
+  const query = { _id: new ObjectId(uid) };
+  const properties = await posts.findOne(query);
+
+  return properties.storeProperties;
 };
 
 /**

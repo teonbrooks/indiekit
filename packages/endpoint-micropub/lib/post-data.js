@@ -53,11 +53,11 @@ export const postData = {
       ? "draft"
       : properties["post-status"] || "published";
 
-    const postData = { path, properties };
+    const postData = { storeProperties: { path }, properties };
 
     // Add data to posts collection (if present)
     if (hasDatabase) {
-      await posts.insertOne(postData, { checkKeys: false });
+      await posts.insertOne(postData);
     }
 
     return postData;
@@ -96,9 +96,10 @@ export const postData = {
     const { me, postTypes } = publication;
 
     // Read properties
-    let { path: _originalPath, properties } = await this.read(application, url);
+    let { storeProperties, properties } = await this.read(application, url);
 
     // Save incoming properties for later comparison
+    const _originalPath = storeProperties.path;
     const _originalProperties = structuredClone(properties);
 
     // Add properties
@@ -151,9 +152,17 @@ export const postData = {
     properties.updated = getDate(timeZone);
 
     // Update data in posts collection
-    const postData = { _originalPath, path, properties };
     const query = { "properties.url": url };
-    await posts.replaceOne(query, postData, { checkKeys: false });
+    const update = {
+      $set: {
+        properties,
+        "storeProperties._originalPath": _originalPath,
+        "storeProperties.path": path,
+      },
+    };
+    const { value: postData } = await posts.findOneAndUpdate(query, update, {
+      returnDocument: "after",
+    });
 
     return postData;
   },
@@ -198,9 +207,17 @@ export const postData = {
     );
 
     // Update data in posts collection
-    const postData = { path, properties, _deletedProperties };
     const query = { "properties.url": url };
-    await posts.replaceOne(query, postData, { checkKeys: false });
+    const update = {
+      $set: {
+        _deletedProperties,
+        properties,
+        "storeProperties.path": path,
+      },
+    };
+    const { value: postData } = await posts.findOneAndUpdate(query, update, {
+      returnDocument: "after",
+    });
 
     return postData;
   },
@@ -242,9 +259,19 @@ export const postData = {
       : properties["post-status"] || "published";
 
     // Update data in posts collection
-    const postData = { path, properties };
     const query = { "properties.url": url };
-    await posts.replaceOne(query, postData, { checkKeys: false });
+    const update = {
+      $set: {
+        properties,
+        "storeProperties.path": path,
+      },
+      $unset: {
+        _deletedProperties: "",
+      },
+    };
+    const { value: postData } = await posts.findOneAndUpdate(query, update, {
+      returnDocument: "after",
+    });
 
     return postData;
   },

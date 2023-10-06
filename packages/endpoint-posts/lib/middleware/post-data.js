@@ -5,6 +5,7 @@ import {
   getPostName,
   getPostProperties,
   getPostTypeName,
+  getStoreProperties,
   getSyndicateToItems,
 } from "../utils.js";
 
@@ -65,6 +66,8 @@ export const postData = {
 
       const postType = properties["post-type"];
 
+      const storeProperties = await getStoreProperties(application, uid);
+
       response.locals = {
         accessToken: access_token,
         action: action || "create",
@@ -79,6 +82,7 @@ export const postData = {
         showAdvancedOptions: true,
         syndicationTargetItems: getSyndicateToItems(publication),
         statusTypes,
+        storeProperties,
         ...response.locals,
       };
 

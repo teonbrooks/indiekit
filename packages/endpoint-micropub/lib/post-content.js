@@ -1,13 +1,16 @@
+import { storeData } from "./store-data.js";
+
 export const postContent = {
   /**
    * Create post
+   * @param {object} application - Application configuration
    * @param {object} publication - Publication configuration
    * @param {object} postData - Post data
    * @returns {Promise<object>} Response data
    */
-  async create(publication, postData) {
+  async create(application, publication, postData) {
     const { postTemplate, store, storeMessageTemplate } = publication;
-    const { path, properties } = postData;
+    const { properties, storeProperties } = postData;
     const metaData = {
       action: "create",
       result: "created",
@@ -17,7 +20,11 @@ export const postContent = {
     const content = await postTemplate(properties);
     const message = storeMessageTemplate(metaData);
 
-    await store.createFile(path, content, { message });
+    const storeUrl = await store.createFile(storeProperties.path, content, {
+      message,
+    });
+
+    await storeData.create(application, postData, storeUrl);
 
     return {
       location: properties.url,
@@ -31,14 +38,15 @@ export const postContent = {
 
   /**
    * Update post
+   * @param {object} application - Application configuration
    * @param {object} publication - Publication configuration
    * @param {object} postData - Post data
    * @param {string} url - Files attached to request
    * @returns {Promise<object>} Response data
    */
-  async update(publication, postData, url) {
+  async update(application, publication, postData, url) {
     const { postTemplate, store, storeMessageTemplate } = publication;
-    const { _originalPath, path, properties } = postData;
+    const { properties, storeProperties } = postData;
     const metaData = {
       action: "update",
       result: "updated",
@@ -49,14 +57,15 @@ export const postContent = {
     const message = storeMessageTemplate(metaData);
     const hasUpdatedUrl = url !== properties.url;
 
-    _originalPath === path
-      ? await store.updateFile(path, content, { message })
-      : await store.updateFile(_originalPath, content, {
-          message,
-          newPath: path,
-        });
+    const storeUrl =
+      storeProperties._originalPath === storeProperties.path
+        ? await store.updateFile(storeProperties.path, content, { message })
+        : await store.updateFile(storeProperties._originalPath, content, {
+            message,
+            newPath: storeProperties.path,
+          });
 
-    delete postData._originalPath;
+    await storeData.update(application, postData, storeUrl);
 
     return {
       location: properties.url,
@@ -72,13 +81,14 @@ export const postContent = {
 
   /**
    * Delete post
+   * @param {object} application - Application configuration
    * @param {object} publication - Publication configuration
    * @param {object} postData - Post data
    * @returns {Promise<object>} Response data
    */
-  async delete(publication, postData) {
+  async delete(application, publication, postData) {
     const { store, storeMessageTemplate } = publication;
-    const { path, properties } = postData;
+    const { properties, storeProperties } = postData;
     const metaData = {
       action: "delete",
       result: "deleted",
@@ -87,7 +97,9 @@ export const postContent = {
     };
     const message = storeMessageTemplate(metaData);
 
-    await store.deleteFile(path, { message });
+    await store.deleteFile(storeProperties.path, { message });
+
+    await storeData.delete(application, postData);
 
     return {
       status: 200,
@@ -100,13 +112,14 @@ export const postContent = {
 
   /**
    * Undelete post
+   * @param {object} application - Application configuration
    * @param {object} publication - Publication configuration
    * @param {object} postData - Post data
    * @returns {Promise<object>} Response data
    */
-  async undelete(publication, postData) {
+  async undelete(application, publication, postData) {
     const { postTemplate, store, storeMessageTemplate } = publication;
-    const { path, properties } = postData;
+    const { properties, storeProperties } = postData;
     const metaData = {
       action: "undelete",
       result: "undeleted",
@@ -116,7 +129,11 @@ export const postContent = {
     const content = await postTemplate(properties);
     const message = storeMessageTemplate(metaData);
 
-    await store.createFile(path, content, { message });
+    const storeUrl = await store.createFile(storeProperties.path, content, {
+      message,
+    });
+
+    await storeData.create(application, postData, storeUrl);
 
     return {
       location: properties.url,

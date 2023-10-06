@@ -17,7 +17,8 @@ test.beforeEach((t) => {
 });
 
 test("Creates a post", async (t) => {
-  const result = await postContent.create(publication, postData);
+  const application = { hasDatabase: false };
+  const result = await postContent.create(application, publication, postData);
 
   t.deepEqual(result, {
     location: "https://website.example/foo",
@@ -31,13 +32,20 @@ test("Creates a post", async (t) => {
 });
 
 test("Throws error creating a post", async (t) => {
-  await t.throwsAsync(postContent.create(false, postData), {
+  const application = { hasDatabase: false };
+  await t.throwsAsync(postContent.create(application, false, postData), {
     message: "postTemplate is not a function",
   });
 });
 
 test("Updates a post", async (t) => {
-  const result = await postContent.update(publication, postData, t.context.url);
+  const application = { hasDatabase: false };
+  const result = await postContent.update(
+    application,
+    publication,
+    postData,
+    t.context.url,
+  );
 
   t.deepEqual(result, {
     location: "https://website.example/foo",
@@ -50,13 +58,18 @@ test("Updates a post", async (t) => {
 });
 
 test("Throws error updating a post", async (t) => {
-  await t.throwsAsync(postContent.update(false, postData, t.context.url), {
-    message: "postTemplate is not a function",
-  });
+  const application = { hasDatabase: false };
+  await t.throwsAsync(
+    postContent.update(application, false, postData, t.context.url),
+    {
+      message: "postTemplate is not a function",
+    },
+  );
 });
 
 test("Deletes a post", async (t) => {
-  const result = await postContent.delete(publication, postData);
+  const application = { hasDatabase: false };
+  const result = await postContent.delete(application, publication, postData);
 
   t.deepEqual(result, {
     status: 200,
@@ -68,13 +81,19 @@ test("Deletes a post", async (t) => {
 });
 
 test("Throws error deleting a post", async (t) => {
-  await t.throwsAsync(postContent.delete(false, postData), {
+  const application = { hasDatabase: false };
+  await t.throwsAsync(postContent.delete(application, false, postData), {
     message: "storeMessageTemplate is not a function",
   });
 });
 
 test("Undeletes a post", async (t) => {
-  const result = await postContent.undelete(publication, deletedPostData);
+  const application = { hasDatabase: false };
+  const result = await postContent.undelete(
+    application,
+    publication,
+    deletedPostData,
+  );
 
   t.deepEqual(result, {
     location: "https://website.example/foo",
@@ -87,7 +106,8 @@ test("Undeletes a post", async (t) => {
 });
 
 test("Throws error undeleting a post", async (t) => {
-  await t.throwsAsync(postContent.undelete(false, postData), {
+  const application = { hasDatabase: false };
+  await t.throwsAsync(postContent.undelete(application, false, postData), {
     message: "postTemplate is not a function",
   });
 });

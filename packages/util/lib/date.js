@@ -7,9 +7,13 @@ import locales from "date-fns/locale/index.js";
  * @param {string} string - ISO 8601 date
  * @param {string} tokens - Tokenised date format
  * @param {string} lang - ISO 639-1 (plus optional country code)
- * @returns {string} Formatted date
+ * @returns {string|boolean} Formatted date
  */
 export const formatDate = (string, tokens, lang = "en") => {
+  if (!string) {
+    return false;
+  }
+
   const locale = locales[lang.replace("-", "")];
   const date = string === "now" ? new Date() : parseISO(string);
   const dateTime = dateFnsTz.format(date, tokens, { locale });
