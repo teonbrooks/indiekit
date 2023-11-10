@@ -15,6 +15,7 @@ const config = {
   plugins: [
     "@indiekit-test/frontend",
     "@indiekit/endpoint-json-feed",
+    "@indiekit/endpoint-webmention",
     "@indiekit/preset-jekyll",
     "@indiekit/store-github",
     "@indiekit/syndicator-internet-archive",

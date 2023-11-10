@@ -58,6 +58,7 @@ export const Indiekit = class {
     // Setup databases
     if (database) {
       this.application.hasDatabase = true;
+      this.application.database = database;
       this.application.cache = new Keyv({
         collectionName: "cache",
         store: new KeyvMongoDB({ db: database }),
