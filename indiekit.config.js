@@ -10,6 +10,8 @@ const config = {
     ...(process.env.RAILWAY_ENVIRONMENT && {
       url: `https://${process.env.RAILWAY_STATIC_URL}`,
     }),
+    name: "Indiekit Test",
+    themeColor: "#f70",
     timeZone: process.env.TZ,
   },
   plugins: [
