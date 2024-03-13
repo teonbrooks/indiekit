@@ -30,6 +30,12 @@ export const locals = (indiekitConfig) =>
       // Only update if serving HTML to prevent wrong session link being shown
       if (request.accepts("html")) {
         application.navigation = getNavigation(application, request, response);
+        application.shortcuts = getNavigation(application, request, response)
+          .filter((item) => item.secondary !== true)
+          .map((item) => ({
+            name: item.text,
+            url: item.href,
+          }));
       }
 
       // Application endpoints
