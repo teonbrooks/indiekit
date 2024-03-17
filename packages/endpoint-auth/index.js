@@ -42,6 +42,7 @@ export default class AuthorizationEndpoint {
     router.post("/token", codeValidator, tokenController.post);
 
     // Verification
+    router.get("/token", introspectionController.post);
     router.post("/introspect", introspectionController.post);
 
     // Metadata

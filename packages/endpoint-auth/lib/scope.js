@@ -7,7 +7,10 @@ export const scopes = ["create", "update", "draft", "media", "delete"];
  * @returns {object} Items for checkboxes component
  */
 export function getScopeItems(scope, response) {
-  return scopes.map((value) => ({
+  console.log("scope", scope);
+  const scopesArray = scope.split(" ");
+
+  return scopesArray.map((value) => ({
     label: response.locals.__(`scope.${value}.label`),
     value,
     checked: scope?.includes(value),

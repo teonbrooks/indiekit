@@ -11,6 +11,7 @@ export const consentController = {
    * @type {import("express").RequestHandler}
    */
   get(request, response) {
+    console.log("consentController.get");
     if (!request.query.request_uri) {
       throw IndiekitError.badRequest(
         response.locals.__("BadRequestError.missingParameter", "request_uri"),
@@ -20,6 +21,10 @@ export const consentController = {
     try {
       const { me, redirect_uri, scope } = getRequestUriData(request);
       const authType = scope === undefined ? "authenticate" : "authorize";
+
+      console.log("authType", authType);
+      console.log("redirect_uri", redirect_uri);
+      console.log("scope", scope);
 
       if (process.env.PASSWORD_SECRET) {
         response.render("consent", {
@@ -45,6 +50,7 @@ export const consentController = {
    * @see {@link https://indieauth.spec.indieweb.org/#authorization-response}
    */
   post(request, response) {
+    console.log("consentController.post");
     let { scope } = request.body;
     const {
       client_id,
@@ -84,6 +90,8 @@ export const consentController = {
       redirect_uri,
       ...(scope && { scope }),
     });
+
+    console.log("code", code);
 
     // Authorization response
     const redirect = new URL(redirect_uri);

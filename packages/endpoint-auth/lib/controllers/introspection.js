@@ -9,6 +9,7 @@ export const introspectionController = {
    * @see {@link https://indieauth.spec.indieweb.org/#access-token-verification}
    */
   post(request, response) {
+    console.log("introspectionController.post");
     try {
       const { application } = request.app.locals;
       let { token } = request.body;
@@ -16,6 +17,7 @@ export const introspectionController = {
       if (!token) {
         // Remove ‘Bearer ’ from authorization header
         token = request.headers.authorization.trim().split(/\s+/)[1];
+        console.log("bearer token", token);
       }
 
       let accessToken = verifyToken(token);
@@ -24,6 +26,8 @@ export const introspectionController = {
         client_id: application.url,
         ...accessToken,
       };
+
+      console.log("accessToken", accessToken);
 
       response.json(accessToken);
     } catch {

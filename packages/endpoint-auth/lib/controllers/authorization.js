@@ -15,6 +15,7 @@ export const authorizationController = {
    * @see {@link https://indieauth.spec.indieweb.org/#authorization-response}
    */
   async get(request, response, next) {
+    console.log("authorizationController.get");
     try {
       const { application } = request.app.locals;
 
@@ -63,6 +64,8 @@ export const authorizationController = {
       const { code_challenge, code_challenge_method, redirect_uri, client_id } =
         request.query;
 
+      console.log("request.query", request.query);
+
       // Validate `redirect_uri`
       const validRedirect = validateRedirect(
         String(redirect_uri),
@@ -101,6 +104,7 @@ export const authorizationController = {
    * @see {@link https://indieauth.spec.indieweb.org/#profile-url-response}
    */
   async post(request, response) {
+    console.log("authorizationController.post");
     const profileToken = { me: request.verifiedToken.me };
 
     if (request.accepts("application/json")) {
